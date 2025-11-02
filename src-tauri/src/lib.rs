@@ -1,11 +1,14 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use isideload::{developer_session::DeveloperSession, AnisetteConfiguration, AppleAccount};
+use keyring::Entry;
 use once_cell::sync::OnceCell;
+use serde_json::Value;
 use std::{
     sync::{mpsc::RecvTimeoutError, Arc, Mutex},
     time::Duration,
 };
 use tauri::{AppHandle, Emitter, Listener, Manager, Window};
+use tauri_plugin_store::StoreExt;
 
 pub static APPLE_ACCOUNT: OnceCell<Mutex<Option<Arc<AppleAccount>>>> = OnceCell::new();
 
@@ -16,12 +19,96 @@ async fn login_email_pass(
     email: String,
     password: String,
     anisette_server: String,
+    save_credentials: bool,
 ) -> Result<String, String> {
     let cell = APPLE_ACCOUNT.get_or_init(|| Mutex::new(None));
+    let account = login(&handle, &window, email, password.clone(), anisette_server).await?;
+    let mut account_guard = cell.lock().unwrap();
+    *account_guard = Some(account.clone());
+
+    if save_credentials {
+        println!("Saving credentials to keyring: '{}'", &account.apple_id);
+        let pass_entry = Entry::new("iloader", &account.apple_id)
+            .map_err(|e| format!("Failed to create keyring entry for credentials: {:?}.", e))?;
+        pass_entry
+            .set_password(&password)
+            .map_err(|e| format!("Failed to save credentials to keyring: {:?}", e))?;
+        let store = handle
+            .store("data.json")
+            .map_err(|e| format!("Failed to get store: {:?}", e))?;
+        let mut existing_ids = store
+            .get("ids")
+            .unwrap_or_else(|| Value::Array(vec![]))
+            .as_array()
+            .cloned()
+            .unwrap_or_else(|| vec![]);
+        let value = Value::String(account.apple_id.clone());
+        if !existing_ids.contains(&value) {
+            existing_ids.push(value);
+        }
+        store.set("ids", Value::Array(existing_ids));
+    }
+    return Ok(account.apple_id.clone());
+}
+
+#[tauri::command]
+async fn login_stored_pass(
+    handle: AppHandle,
+    window: Window,
+    email: String,
+    anisette_server: String,
+) -> Result<String, String> {
+    let cell = APPLE_ACCOUNT.get_or_init(|| Mutex::new(None));
+    println!("Accessing credentials from keyring: '{}'", &email);
+    let pass_entry = Entry::new("iloader", &email)
+        .map_err(|e| format!("Failed to create keyring entry for credentials: {:?}.", e))?;
+    let password = pass_entry
+        .get_password()
+        .map_err(|e| format!("Failed to get credentials: {:?}", e))?;
     let account = login(&handle, &window, email, password, anisette_server).await?;
     let mut account_guard = cell.lock().unwrap();
     *account_guard = Some(account.clone());
+
     return Ok(account.apple_id.clone());
+}
+
+#[tauri::command]
+fn list_stored_ids(handle: AppHandle) -> Result<Vec<String>, String> {
+    let store = handle
+        .store("data.json")
+        .map_err(|e| format!("Failed to get store: {:?}", e))?;
+    let existing_ids = store
+        .get("ids")
+        .unwrap_or_else(|| Value::Array(vec![]))
+        .as_array()
+        .cloned()
+        .unwrap_or_else(|| vec![]);
+    let ids: Vec<String> = existing_ids
+        .into_iter()
+        .filter_map(|v| v.as_str().map(|s| s.to_string()))
+        .collect();
+    Ok(ids)
+}
+
+#[tauri::command]
+fn delete_account(handle: AppHandle, email: String) -> Result<(), String> {
+    let pass_entry = Entry::new("iloader", &email)
+        .map_err(|e| format!("Failed to create keyring entry for credentials: {:?}.", e))?;
+    pass_entry
+        .delete_credential()
+        .map_err(|e| format!("Failed to delete credentials: {:?}", e))?;
+    let store = handle
+        .store("data.json")
+        .map_err(|e| format!("Failed to get store: {:?}", e))?;
+    let mut existing_ids = store
+        .get("ids")
+        .unwrap_or_else(|| Value::Array(vec![]))
+        .as_array()
+        .cloned()
+        .unwrap_or_else(|| vec![]);
+    existing_ids.retain(|v| v.as_str().map_or(true, |s| s != email));
+    store.set("ids", Value::Array(existing_ids));
+    Ok(())
 }
 
 #[tauri::command]
@@ -148,10 +235,19 @@ pub async fn login(
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_store::Builder::new().build())
+        .setup(|app| {
+            app.store("data.json")?;
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             login_email_pass,
             invalidate_account,
-            logged_in_as
+            logged_in_as,
+            login_stored_pass,
+            list_stored_ids,
+            delete_account
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -14,7 +14,7 @@ function App() {
       <h1>iloader</h1>
       <div className="buttons">
         <button onClick={() => setOpenModal("sidestore")}>
-          Install Sidestore
+          Install SideStore
         </button>
         <button onClick={() => setOpenModal("other")}>Install Other</button>
         <button>Manage Pairing File</button>

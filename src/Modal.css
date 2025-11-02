@@ -1,5 +1,5 @@
 .modal-container {
-  position: absolute;
+  position: fixed;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   top: 0;
@@ -21,7 +21,6 @@
   max-height: 80%;
   max-width: 90%;
   box-sizing: border-box;
-  overflow-y: auto;
   position: relative;
 }
 
@@ -83,4 +82,15 @@
   transition: all 0.2s;
   align-self: center;
   position: relative;
+}
+
+.active-page {
+  background-color: #000000f0;
+}
+
+.modal-content {
+  overflow-y: auto;
+  max-height: calc(80vh - 4em);
+  padding: 5px;
+  box-sizing: border-box;
 }

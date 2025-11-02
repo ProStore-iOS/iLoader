@@ -48,3 +48,28 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+.credentials h3 {
+  margin-bottom: 0;
+  margin-top: 1.5em;
+}
+
+.stored-ids {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stored-container {
+  border-radius: 8px;
+  width: fit-content;
+  padding: 0.5em 1em;
+  margin: 0;
+  background-color: var(--interface-secondary);
+}
+
+.stored {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}

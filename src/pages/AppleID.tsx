@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 export const AppleID = () => {
   const [loggedInAs, setLoggedInAs] = useState<string | null>(null);
+  const [storedIds, setStoredIds] = useState<string[]>([]);
   const [emailInput, setEmailInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [saveCredentials, setSaveCredentials] = useState<boolean>(false);
@@ -14,10 +15,17 @@ export const AppleID = () => {
   const [tfaCode, setTfaCode] = useState<string>("");
 
   useEffect(() => {
-    (async () => {
+    let getLoggedInAs = async () => {
       let account = await invoke<string | null>("logged_in_as");
       setLoggedInAs(account);
-    })();
+    };
+    let getStoredIds = async () => {
+      let ids = await invoke<string[]>("list_stored_ids");
+      setStoredIds(ids);
+    };
+
+    getLoggedInAs();
+    getStoredIds();
   }, []);
 
   const listenerAdded = useRef<boolean>(false);
@@ -42,8 +50,7 @@ export const AppleID = () => {
     <>
       <h1>Apple ID</h1>
       <p>
-        Enter your Apple ID credentials. Your credentials will only be sent to
-        Apple.
+        Login to your Apple ID. Your credentials will only be sent to Apple.
       </p>
       <div className="credentials-container">
         {loggedInAs && (
@@ -67,8 +74,59 @@ export const AppleID = () => {
             </div>
           </div>
         )}
+        {storedIds.length > 0 && (
+          <div className="stored-ids">
+            <h3>Stored Credentials:</h3>
+            <div className="stored-container">
+              {storedIds.map((id) => (
+                <div className="stored">
+                  {id}
+                  {!loggedInAs && (
+                    <div
+                      className="sign-out"
+                      onClick={() => {
+                        let promise = async () => {
+                          let email = await invoke("login_stored_pass", {
+                            email: id,
+                            anisetteServer: "ani.sidestore.io",
+                          });
+                          setLoggedInAs(email as string);
+                        };
+                        toast.promise(promise, {
+                          loading: "Logging in...",
+                          success: "Logged in successfully!",
+                          error: (e) => `Login failed: ${e}`,
+                        });
+                      }}
+                    >
+                      Sign in
+                    </div>
+                  )}
+                  <div
+                    className="sign-out"
+                    onClick={async () => {
+                      let promise = async () => {
+                        await invoke("delete_account", { email: id });
+                        let ids = await invoke<string[]>("list_stored_ids");
+                        setStoredIds(ids);
+                      };
+                      toast.promise(promise, {
+                        loading: "Deleting...",
+                        error: (e) => `Deletion failed: ${e}`,
+                        success: "Deleted successfully!",
+                      });
+                    }}
+                  >
+                    Delete
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {loggedInAs === null && (
           <div className="credentials">
+            {storedIds.length > 0 && <h3>New Login</h3>}
             <input
               type="email"
               placeholder="Apple ID Email..."
