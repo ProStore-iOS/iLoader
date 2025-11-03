@@ -68,3 +68,12 @@
   display: flex;
   justify-content: space-between;
 }
+
+.add-account {
+  text-decoration: underline;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #00000060;
+  padding-top: 0.5em;
+}

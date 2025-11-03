@@ -3,7 +3,7 @@ import "./AppleID.css";
 import { invoke } from "@tauri-apps/api/core";
 import { emit, listen } from "@tauri-apps/api/event";
 import { load } from "@tauri-apps/plugin-store";
-import { Modal } from "./Modal";
+import { Modal } from "./components/Modal";
 import { toast } from "sonner";
 
 const store = await load("data.json");
@@ -17,6 +17,7 @@ export const AppleID = () => {
   const [saveCredentials, setSaveCredentials] = useState<boolean>(false);
   const [tfaOpen, setTfaOpen] = useState<boolean>(false);
   const [tfaCode, setTfaCode] = useState<string>("");
+  const [addAccountOpen, setAddAccountOpen] = useState<boolean>(false);
 
   useEffect(() => {
     let getLoggedInAs = async () => {
@@ -121,10 +122,20 @@ export const AppleID = () => {
                   </div>
                 </div>
               ))}
+              {!addAccountOpen && (
+                <div
+                  className="stored add-account"
+                  onClick={() => {
+                    setAddAccountOpen(true);
+                  }}
+                >
+                  Add Account +
+                </div>
+              )}
             </div>
           </div>
         )}
-        {loggedInAs === null && (
+        {loggedInAs === null && (storedIds.length === 0 || addAccountOpen) && (
           <div className="new-login">
             {storedIds.length > 0 && <h3>New Login</h3>}
             <div className="credentials">
@@ -169,6 +180,15 @@ export const AppleID = () => {
               >
                 Login
               </button>
+              {addAccountOpen && storedIds.length > 0 && (
+                <button
+                  onClick={() => {
+                    setAddAccountOpen(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           </div>
         )}

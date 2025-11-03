@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import { Modal } from "./Modal";
+import { Modal } from "./components/Modal";
 import { AppleID } from "./AppleID";
 import { Device } from "./Device";
 import { SideStore } from "./SideStore";

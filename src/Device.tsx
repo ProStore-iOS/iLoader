@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./Device.css";
 import { invoke } from "@tauri-apps/api/core";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ export const Device = () => {
   const [devices, setDevices] = useState<DeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<DeviceInfo | null>(null);
 
+  const listingDevices = useRef<boolean>(false);
+
   const selectDevice = useCallback(
     (device: DeviceInfo | null) => {
       setSelectedDevice(device);
@@ -23,10 +25,13 @@ export const Device = () => {
   );
 
   const loadDevices = useCallback(async () => {
+    if (listingDevices.current) return;
     const promise = async () => {
+      listingDevices.current = true;
       const devices = await invoke<DeviceInfo[]>("list_devices");
       setDevices(devices);
       selectDevice(devices.length > 0 ? devices[0] : null);
+      listingDevices.current = false;
       return devices.length;
     };
 
