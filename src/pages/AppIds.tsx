@@ -2,6 +2,7 @@ import "./Certificates.css";
 import { invoke } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useStore } from "../StoreContext";
 
 type AppId = {
   app_id_id: string;
@@ -25,6 +26,7 @@ export const AppIds = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const loadingRef = useRef<boolean>(false);
+  const [appIdDeletion] = useStore<boolean>("allowAppIdDeletion", false);
 
   const loadAppIds = useCallback(async () => {
     if (loadingRef.current) return;
@@ -83,8 +85,15 @@ export const AppIds = () => {
                   <th className="cert-item-part">Name</th>
                   <th className="cert-item-part">Expiration</th>
                   <th className="cert-item-part">ID</th>
-                  <th className="cert-item-part">Identifier</th>
-                  <th>Delete</th>
+                  <th
+                    className="cert-item-part"
+                    style={{
+                      borderRight: appIdDeletion ? undefined : "none",
+                    }}
+                  >
+                    Identifier
+                  </th>
+                  {appIdDeletion && <th>Delete</th>}
                 </tr>
               </thead>
               <tbody>
@@ -103,13 +112,22 @@ export const AppIds = () => {
                         : "Never"}
                     </td>
                     <td className="cert-item-part">{appId.app_id_id}</td>
-                    <td className="cert-item-part">{appId.identifier}</td>
                     <td
-                      className="cert-item-revoke"
-                      onClick={() => deleteId(appId.app_id_id)}
+                      className="cert-item-part"
+                      style={{
+                        borderRight: appIdDeletion ? undefined : "none",
+                      }}
                     >
-                      Delete
+                      {appId.identifier}
                     </td>
+                    {appIdDeletion && (
+                      <td
+                        className="cert-item-revoke"
+                        onClick={() => deleteId(appId.app_id_id)}
+                      >
+                        Delete
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

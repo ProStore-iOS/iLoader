@@ -1,0 +1,26 @@
+.settings-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: left;
+  gap: 0.5em;
+}
+
+select {
+  font-size: 1rem;
+}
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.custom-anisette {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.settings-hint {
+  color: lightgray;
+  font-size: 0.9rem;
+}

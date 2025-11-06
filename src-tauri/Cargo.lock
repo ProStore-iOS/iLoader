@@ -2365,9 +2365,9 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
 
 [[package]]
 name = "isideload"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fb4869c9ecca53042f2a1271d495c1556048bd68c86651088c8d002df69d3c8"
+checksum = "ff47b14488308b8b1b5e43bd15fab9e735ce0fbe96f619833c780d99664ae7ee"
 dependencies = [
  "hex",
  "idevice",
@@ -2766,9 +2766,9 @@ dependencies = [
 
 [[package]]
 name = "nab138_icloud_auth"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfd1af0cb498075f8ca43cc6ca6ed38e4ba03ffb2be7c7dc59b67d38aadb98d4"
+checksum = "c9b132227d7e97a5195a2789bed0bf466f59ef5c50d653a93f83723cd2b122d8"
 dependencies = [
  "aes",
  "base64 0.22.1",
@@ -2794,9 +2794,9 @@ dependencies = [
 
 [[package]]
 name = "nab138_omnisette"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c76b94e0fd82f63cae59a3b7973177469badd3c24f39d04c1d648d8ccf214ace"
+checksum = "e72297f17b8e5de5af9c3408edee92f62d777a280cd4a991dadaabc9a91f71d9"
 dependencies = [
  "anyhow",
  "async-trait",

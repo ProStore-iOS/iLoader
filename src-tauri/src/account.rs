@@ -188,7 +188,7 @@ async fn login(
     let config = AnisetteConfiguration::default();
     let config =
         config.set_configuration_path(handle.path().app_config_dir().map_err(|e| e.to_string())?);
-    let config = config.set_anisette_url(format!("https://{}", anisette_server));
+    let config = config.set_anisette_url_v3(format!("https://{}", anisette_server));
 
     let account = AppleAccount::login(
         || Ok((email.clone(), password.clone())),
@@ -264,9 +264,7 @@ pub async fn list_app_ids() -> Result<ListAppIdsResponse, String> {
 }
 
 #[tauri::command]
-pub async fn delete_app_id(
-    app_id_id: String,
-) -> Result<(), String> {
+pub async fn delete_app_id(app_id_id: String) -> Result<(), String> {
     let dev_session = get_developer_session().await?;
     let team = dev_session
         .get_team()

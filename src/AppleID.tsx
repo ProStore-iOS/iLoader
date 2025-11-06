@@ -5,6 +5,7 @@ import { emit, listen } from "@tauri-apps/api/event";
 import { load } from "@tauri-apps/plugin-store";
 import { Modal } from "./components/Modal";
 import { toast } from "sonner";
+import { useStore } from "./StoreContext";
 
 const store = await load("data.json");
 
@@ -23,6 +24,10 @@ export const AppleID = ({
   const [tfaOpen, setTfaOpen] = useState<boolean>(false);
   const [tfaCode, setTfaCode] = useState<string>("");
   const [addAccountOpen, setAddAccountOpen] = useState<boolean>(false);
+  const [anisetteServer] = useStore<string>(
+    "anisetteServer",
+    "ani.sidestore.io"
+  );
 
   useEffect(() => {
     let getLoggedInAs = async () => {
@@ -95,7 +100,7 @@ export const AppleID = ({
                         let promise = async () => {
                           await invoke("login_stored_pass", {
                             email: id,
-                            anisetteServer: "ani.sidestore.io",
+                            anisetteServer,
                           });
                           setForceUpdateIds((v) => v + 1);
                         };
@@ -172,7 +177,7 @@ export const AppleID = ({
                       email: emailInput,
                       password: passwordInput,
                       saveCredentials: saveCredentials,
-                      anisetteServer: "ani.sidestore.io",
+                      anisetteServer,
                     });
                     setForceUpdateIds((v) => v + 1);
                   };

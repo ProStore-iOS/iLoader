@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Modal } from "./components/Modal";
 import { Certificates } from "./pages/Certificates";
 import { AppIds } from "./pages/AppIds";
+import { Settings } from "./pages/Settings";
 
 function App() {
   const [operationState, setOperationState] = useState<OperationState | null>(
@@ -24,9 +25,9 @@ function App() {
   );
   const [loggedInAs, setLoggedInAs] = useState<string | null>(null);
   const [selectedDevice, setSelectedDevice] = useState<DeviceInfo | null>(null);
-  const [openModal, setOpenModal] = useState<null | "certificates" | "appids">(
-    null
-  );
+  const [openModal, setOpenModal] = useState<
+    null | "certificates" | "appids" | "settings"
+  >(null);
 
   const startOperation = useCallback(
     async (
@@ -164,6 +165,13 @@ function App() {
             >
               Manage App IDs
             </button>
+            <button
+              onClick={() => {
+                setOpenModal("settings");
+              }}
+            >
+              Settings
+            </button>
           </div>
         </div>
       </div>
@@ -181,6 +189,9 @@ function App() {
       </Modal>
       <Modal isOpen={openModal === "appids"} close={() => setOpenModal(null)}>
         <AppIds />
+      </Modal>
+      <Modal isOpen={openModal === "settings"} close={() => setOpenModal(null)}>
+        <Settings />
       </Modal>
     </main>
   );
