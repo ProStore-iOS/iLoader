@@ -1,6 +1,8 @@
 export type Operation = {
   id: string;
   title: string;
+  successMessage?: string;
+  successTitle?: string;
   steps: OperationStep[];
 };
 
@@ -35,6 +37,9 @@ export type OperationUpdate = OperationInfoUpdate | OperationFailedUpdate;
 export const installSideStoreOperation: Operation = {
   id: "install_sidestore",
   title: "Installing SideStore",
+  successTitle: "SideStore Installed!",
+  successMessage:
+    "Open SideStore and refresh it to complete the installation! SideStore will expire early if you skip this step.",
   steps: [
     {
       id: "download",

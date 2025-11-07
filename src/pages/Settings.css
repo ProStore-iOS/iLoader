@@ -22,5 +22,6 @@ select {
 
 .settings-hint {
   color: lightgray;
-  font-size: 0.9rem;
+  font-size: 0.8em;
+  text-align: left;
 }

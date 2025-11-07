@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 
 use crate::{
     account::get_developer_session,
@@ -13,6 +13,7 @@ pub async fn sideload(
     handle: AppHandle,
     device_state: State<'_, DeviceInfoMutex>,
     app_path: String,
+    revoke_cert: bool,
 ) -> Result<(), String> {
     let device = {
         let device_lock = device_state.lock().unwrap();
@@ -31,13 +32,30 @@ pub async fn sideload(
                 .path()
                 .app_data_dir()
                 .map_err(|e| format!("Failed to get app data dir: {:?}", e))?,
-        );
+        )
+        .set_revoke_cert(revoke_cert);
 
     let dev_session = get_developer_session().await.map_err(|e| e.to_string())?;
 
+    // If the cache stays it causes apps to crash if an expired cert was ever used even if current certs are valid
+    let zsign_cache = PathBuf::from("./.zsign_cache");
+    if zsign_cache.exists() {
+        fs::remove_dir_all(&zsign_cache)
+            .map_err(|e| format!("Failed to remove zsign cache: {}", e))?;
+    }
+
     sideload_app(&provider, &dev_session, app_path.into(), config)
         .await
-        .map_err(|e| format!("Failed to sideload app: {:?}", e))
+        .map_err(|e| {
+            match e {
+                isideload::Error::Certificate(s) if s == "You have too many certificates!" => {
+                    "You have too many certificates. Revoke one by clicking \"Manage Certificates\" and \"Revoke\".".to_string()
+                }
+                _ => e.to_string(),
+            }
+        })?;
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -49,7 +67,10 @@ pub async fn sideload_operation(
 ) -> Result<(), String> {
     let op = Operation::new("sideload".to_string(), &window);
     op.start("install")?;
-    op.fail_if_err("install", sideload(handle, device_state, app_path).await)?;
+    op.fail_if_err(
+        "install",
+        sideload(handle, device_state, app_path, false).await,
+    )?;
     op.complete("install")?;
     Ok(())
 }
@@ -60,6 +81,7 @@ pub async fn install_sidestore_operation(
     window: Window,
     device_state: State<'_, DeviceInfoMutex>,
     nightly: bool,
+    revoke_cert: bool,
 ) -> Result<(), String> {
     let op = Operation::new("install_sidestore".to_string(), &window);
     let device = {
@@ -89,7 +111,13 @@ pub async fn install_sidestore_operation(
     op.move_on("download", "install")?;
     op.fail_if_err(
         "install",
-        sideload(handle, device_state, dest.to_string_lossy().to_string()).await,
+        sideload(
+            handle,
+            device_state,
+            dest.to_string_lossy().to_string(),
+            revoke_cert,
+        )
+        .await,
     )?;
     op.move_on("install", "pairing")?;
     let sidestore_info = op.fail_if_err("pairing", get_sidestore_info(device.clone()).await)?;

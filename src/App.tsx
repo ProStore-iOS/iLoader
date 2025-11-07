@@ -19,6 +19,7 @@ import { Certificates } from "./pages/Certificates";
 import { AppIds } from "./pages/AppIds";
 import { Settings } from "./pages/Settings";
 import { Pairing } from "./pages/Pairing";
+import { useStore } from "./StoreContext";
 
 function App() {
   const [operationState, setOperationState] = useState<OperationState | null>(
@@ -29,6 +30,8 @@ function App() {
   const [openModal, setOpenModal] = useState<
     null | "certificates" | "appids" | "pairing" | "settings"
   >(null);
+
+  const [revokeCert, setRevokeCert] = useStore<boolean>("revokeCert", true);
 
   const startOperation = useCallback(
     async (
@@ -119,6 +122,7 @@ function App() {
                 if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;
                 startOperation(installSideStoreOperation, {
                   nightly: false,
+                  revokeCert,
                 });
               }}
             >
@@ -129,6 +133,7 @@ function App() {
                 if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;
                 startOperation(installSideStoreOperation, {
                   nightly: true,
+                  revokeCert,
                 });
               }}
             >

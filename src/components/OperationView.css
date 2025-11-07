@@ -6,6 +6,12 @@
   overflow-x: auto;
 }
 
+.operation-content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .operation-step-icon {
   width: 1.5rem;
   height: 1.5rem;
@@ -94,4 +100,9 @@
 
 .operation-header p {
   margin: 0;
+}
+
+.operation-success-message {
+  font-weight: bold;
+  color: rgb(241, 212, 115);
 }
