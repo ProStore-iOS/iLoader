@@ -64,6 +64,14 @@ pub async fn place_pairing(
         .await
         .map_err(|e| format!("Failed to vend documents: {}", e))?;
 
+    afc_client
+        .mk_dir(format!(
+            "/Documents/{}",
+            path.rsplit_once('/').map(|x| x.0).unwrap_or("")
+        ))
+        .await
+        .map_err(|e| format!("Failed to create Documents directory: {}", e))?;
+
     let mut file = afc_client
         .open(
             format!("/Documents/{}", path),
@@ -72,13 +80,16 @@ pub async fn place_pairing(
         .await
         .map_err(|e| format!("Failed to open file on device: {}", e))?;
 
-    file.write(
+    file.write_entire(
         &pairing_file
             .serialize()
             .map_err(|e| format!("Failed to serialize pairing file: {}", e))?,
     )
     .await
     .map_err(|e| format!("Failed to write pairing file: {}", e))?;
+    file.close()
+        .await
+        .map_err(|e| format!("Failed to close file: {}", e))?;
 
     Ok(())
 }

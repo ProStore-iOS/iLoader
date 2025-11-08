@@ -160,7 +160,7 @@ function App() {
             >
               Install SideStore (Nightly)
             </button>
-            {/* <button
+            <button
               onClick={() => {
                 if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;
                 startOperation(installSideStoreOperation, {
@@ -171,7 +171,7 @@ function App() {
               }}
             >
               Install LiveContainer+SideStore
-            </button> */}
+            </button>
             <button
               onClick={async () => {
                 if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;

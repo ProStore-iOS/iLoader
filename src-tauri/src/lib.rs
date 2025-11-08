@@ -17,13 +17,10 @@ use crate::{
     pairing::{installed_pairing_apps, place_pairing_cmd},
     sideload::{install_sidestore_operation, sideload_operation},
 };
-use rustls::crypto::{ring, CryptoProvider};
 use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    CryptoProvider::install_default(ring::default_provider()).unwrap();
-
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
