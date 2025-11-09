@@ -15,7 +15,7 @@ If applicable, add screenshots to help explain your problem.
 **Desktop (please complete the following information):**
 
 - OS (including distro): [e.g. Windows, Arch Linux]
-- CrossCode version: [e.g. 0.0.4]
+- iloader version: [e.g. 0.0.4]
 - Package Format: [e.g. exe, deb]
 
 **Smartphone (please complete the following information):**

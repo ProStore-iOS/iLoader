@@ -44,9 +44,9 @@ jobs:
             ~/.cargo/git
             src-tauri/target
             node_modules
-          key: ${{ matrix.platform }}-crosscode-${{ hashFiles('**/Cargo.lock', 'package-lock.json') }}
+          key: ${{ matrix.platform }}-iloader-${{ hashFiles('**/Cargo.lock', 'package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-crosscode-
+            ${{ runner.os }}-iloader-
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -88,7 +88,7 @@ jobs:
         run: bunx rimraf src-tauri/target/x86_64-apple-darwin/release/bundle
 
       - name: Build
-        uses: nab138/tauri-action@dev
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
