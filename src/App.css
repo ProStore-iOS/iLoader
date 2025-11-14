@@ -20,7 +20,7 @@
   --glass-highlight: #0a84ff;
   --text-muted: #8e8e93;
   --accent-primary: #0a84ff;
-  --accent-secondary: #bf5af2;
+  --accent-secondary: #007aff;
   --success: #30d158;
   --danger: #ff453a;
 }
@@ -83,8 +83,8 @@ body {
 }
 
 .logo {
-  width: 2.1rem;
-  height: 2.1rem;
+  width: 3.2rem;
+  height: 3.2rem;
 }
 
 .version-pill {
@@ -162,6 +162,10 @@ body {
   color: rgba(247, 249, 255, 0.5);
 }
 
+.section-hint.placeholder {
+  visibility: hidden;
+}
+
 input,
 button,
 select {
@@ -174,6 +178,17 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: border-color 0.15s ease, background 0.15s ease,
     transform 0.15s ease;
+}
+
+select option {
+  color: #0b0b0d;
+  background: #f2f2f7;
+}
+
+select option:checked,
+select option:hover {
+  background: var(--accent-primary);
+  color: #fff;
 }
 
 input::placeholder {
@@ -236,6 +251,17 @@ button:active {
 
 .action-grid button {
   width: 100%;
+}
+
+.action-row.single-row {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.action-row.single-row button {
+  flex: 1;
+  min-width: 160px;
 }
 
 .workspace-list {

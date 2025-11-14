@@ -37,35 +37,28 @@
 .logged-in-as {
   width: 100%;
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.logged-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.logged-label {
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.logged-value {
   font-weight: 600;
-}
-
-.sign-out {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  margin-left: 0;
-  background: rgba(255, 255, 255, 0.08);
-  color: inherit;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  font-size: 0.9rem;
-  line-height: 1.2;
-}
-
-.sign-out:hover {
-  color: var(--accent-primary);
-}
-
-.logged-in-as .sign-out {
-  margin-left: auto;
+  font-size: 1.05rem;
+  color: #fff;
 }
 
 .credentials h3 {
@@ -87,12 +80,50 @@
 .stored {
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  padding: 0.6rem 0;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.75rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.stored-email {
+  font-weight: 600;
+  color: #fff;
+}
+
+.action-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.action-button {
+  flex: 1;
+  min-width: 130px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.action-button.primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.action-button.danger {
+  background: rgba(255, 69, 58, 0.12);
+  border-color: rgba(255, 69, 58, 0.55);
+  color: var(--danger);
+}
+
+.action-button:hover {
+  filter: brightness(1.05);
 }
 
 .add-account {

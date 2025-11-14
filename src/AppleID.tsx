@@ -67,22 +67,28 @@ export const AppleID = ({
       <div className="credentials-container">
         {loggedInAs && (
           <div className="logged-in-as card green">
-            Logged in as: {loggedInAs}
-            <div
-              className="sign-out"
-              onClick={async () => {
-                let promise = async () => {
-                  await invoke("invalidate_account");
-                  setForceUpdateIds((v) => v + 1);
-                };
-                toast.promise(promise, {
-                  loading: "Signing Out...",
-                  error: (e) => `Sign out failed: ${e}`,
-                  success: "Signed out successfully!",
-                });
-              }}
-            >
-              Sign Out
+            <div className="logged-info">
+              <span className="logged-label">Logged in as</span>
+              <span className="logged-value">{loggedInAs}</span>
+            </div>
+            <div className="action-row">
+              <button
+                type="button"
+                className="action-button danger"
+                onClick={async () => {
+                  let promise = async () => {
+                    await invoke("invalidate_account");
+                    setForceUpdateIds((v) => v + 1);
+                  };
+                  toast.promise(promise, {
+                    loading: "Signing Out...",
+                    error: (e) => `Sign out failed: ${e}`,
+                    success: "Signed out successfully!",
+                  });
+                }}
+              >
+                Sign Out
+              </button>
             </div>
           </div>
         )}
@@ -92,43 +98,47 @@ export const AppleID = ({
             <div className="stored-container card">
               {storedIds.map((id) => (
                 <div key={id} className="stored">
-                  {id}
-                  {!loggedInAs && (
-                    <div
-                      className="sign-out"
-                      onClick={() => {
-                        let promise = async () => {
-                          await invoke("login_stored_pass", {
-                            email: id,
-                            anisetteServer,
+                  <div className="stored-email">{id}</div>
+                  <div className="action-row">
+                    {!loggedInAs && (
+                      <button
+                        type="button"
+                        className="action-button primary"
+                        onClick={() => {
+                          let promise = async () => {
+                            await invoke("login_stored_pass", {
+                              email: id,
+                              anisetteServer,
+                            });
+                            setForceUpdateIds((v) => v + 1);
+                          };
+                          toast.promise(promise, {
+                            loading: "Logging in...",
+                            success: "Logged in successfully!",
+                            error: (e) => `Login failed: ${e}`,
                           });
+                        }}
+                      >
+                        Sign in
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="action-button danger"
+                      onClick={async () => {
+                        let promise = async () => {
+                          await invoke("delete_account", { email: id });
                           setForceUpdateIds((v) => v + 1);
                         };
                         toast.promise(promise, {
-                          loading: "Logging in...",
-                          success: "Logged in successfully!",
-                          error: (e) => `Login failed: ${e}`,
+                          loading: "Deleting...",
+                          error: (e) => `Deletion failed: ${e}`,
+                          success: "Deleted successfully!",
                         });
                       }}
                     >
-                      Sign in
-                    </div>
-                  )}
-                  <div
-                    className="sign-out"
-                    onClick={async () => {
-                      let promise = async () => {
-                        await invoke("delete_account", { email: id });
-                        setForceUpdateIds((v) => v + 1);
-                      };
-                      toast.promise(promise, {
-                        loading: "Deleting...",
-                        error: (e) => `Deletion failed: ${e}`,
-                        success: "Deleted successfully!",
-                      });
-                    }}
-                  >
-                    Delete
+                      Delete
+                    </button>
                   </div>
                 </div>
               ))}

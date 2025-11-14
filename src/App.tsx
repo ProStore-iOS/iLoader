@@ -177,7 +177,7 @@ function App() {
             <img src={logo} alt="iloader logo" className="logo" />
             <div>
               <h1 className="title">iloader</h1>
-              <p className="subtitle">SideStore companion</p>
+              <p className="subtitle">Sideloading Companion</p>
             </div>
           </div>
           <span className="version-pill">Version {version}</span>
@@ -196,7 +196,12 @@ function App() {
       <div className="workspace-body">
         <aside className="workspace-sidebar">
           <section className="workspace-section">
-            <p className="section-label">Account</p>
+            <div className="section-header">
+              <p className="section-label">Account</p>
+              <span className="section-hint placeholder" aria-hidden="true">
+                Placeholder
+              </span>
+            </div>
             <GlassCard className="panel">
               <AppleID loggedInAs={loggedInAs} setLoggedInAs={setLoggedInAs} />
             </GlassCard>
@@ -278,7 +283,7 @@ function App() {
               <span className="section-hint">Choose a build</span>
             </div>
             <GlassCard className="panel">
-              <div className="action-grid">
+              <div className="action-row single-row">
                 <button
                   onClick={() => {
                     if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;
@@ -307,13 +312,25 @@ function App() {
                   onClick={() => {
                     if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;
                     startOperation(installSideStoreOperation, {
+                      nightly: false,
+                      liveContainer: true,
+                      revokeCert,
+                    });
+                  }}
+                >
+                  LiveContainer + SideStore (Stable)
+                </button>
+                <button
+                  onClick={() => {
+                    if (!ensuredLoggedIn() || !ensureSelectedDevice()) return;
+                    startOperation(installSideStoreOperation, {
                       nightly: true,
                       liveContainer: true,
                       revokeCert,
                     });
                   }}
                 >
-                  LiveContainer + SideStore
+                  LiveContainer + SideStore (Nightly)
                 </button>
                 <button
                   onClick={async () => {
