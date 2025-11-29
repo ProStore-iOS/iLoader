@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::{
     account::get_developer_session,
@@ -12,7 +12,7 @@ use tauri::{AppHandle, Manager, State, Window};
 pub async fn sideload(
     handle: AppHandle,
     device_state: State<'_, DeviceInfoMutex>,
-    app_path: String
+    app_path: String,
 ) -> Result<(), String> {
     let device = {
         let device_lock = device_state.lock().unwrap();
@@ -58,10 +58,7 @@ pub async fn sideload_operation(
 ) -> Result<(), String> {
     let op = Operation::new("sideload".to_string(), &window);
     op.start("install")?;
-    op.fail_if_err(
-        "install",
-        sideload(handle, device_state, app_path).await,
-    )?;
+    op.fail_if_err("install", sideload(handle, device_state, app_path).await)?;
     op.complete("install")?;
     Ok(())
 }
@@ -111,12 +108,7 @@ pub async fn install_sidestore_operation(
     };
     op.fail_if_err(
         "install",
-        sideload(
-            handle,
-            device_state,
-            dest.to_string_lossy().to_string(),
-        )
-        .await,
+        sideload(handle, device_state, dest.to_string_lossy().to_string()).await,
     )?;
     op.move_on("install", "pairing")?;
     let sidestore_info = op.fail_if_err(

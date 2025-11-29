@@ -3,7 +3,8 @@ use std::collections::HashMap;
 // used https://github.com/jkcoxson/idevice_pair/ as a guide
 use idevice::{
     house_arrest::HouseArrestClient, installation_proxy::InstallationProxyClient,
-    pairing_file::PairingFile, usbmuxd::UsbmuxdConnection, IdeviceService,
+    lockdown::LockdownClient, pairing_file::PairingFile, usbmuxd::UsbmuxdConnection,
+    IdeviceService,
 };
 use serde::Serialize;
 use tauri::State;
@@ -35,6 +36,22 @@ async fn pairing_file(
             device.name, e
         )
     })?;
+
+    let mut lc = LockdownClient::connect(&provider)
+        .await
+        .map_err(|e| format!("Failed to connect to lockdown: {}", e))?;
+
+    lc.start_session(&pairing_file)
+        .await
+        .map_err(|e| format!("Failed to start lockdown session: {}", e))?;
+
+    lc.set_value(
+        "EnableWifiDebugging",
+        true.into(),
+        Some("com.apple.mobile.wireless_lockdown"),
+    )
+    .await
+    .map_err(|e| format!("Failed to enable wifi debugging: {}", e))?;
 
     pairing_file.udid = Some(provider.udid.clone());
 
