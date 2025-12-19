@@ -37,7 +37,7 @@ Currently, due to a bug, iloader can't correctly allocate keychain access entitl
 
 - Install SideStore (or LiveContainer + SideStore), import certificate and place pairing file automatically
 - Install other IPAs
-- Manage pairing files in common apps like StikDebug, SideStore, Protokolle, etc
+- Manage pairing files in apps like ProStore, StikDebug, SideStore, Protokolle, etc
 - See and revoke development certificates
 - See App IDs
 - Save multiple apple ID credentials
