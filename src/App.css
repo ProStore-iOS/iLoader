@@ -27,11 +27,18 @@
 
 * {
   box-sizing: border-box;
-  /* TODO: Find solution that doesn't break inputs */
-  /* -webkit-user-select: none; */
+  -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+input,
+textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 body {
